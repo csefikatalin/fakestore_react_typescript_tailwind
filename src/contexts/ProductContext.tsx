@@ -7,14 +7,15 @@ import {
 } from "react";
 
 import type { ReactNode } from "react";
-import type { ProductType } from "../types/ProductType";
-import { getProducts } from "../services/productService";
+import type { NewProductType, ProductType } from "../types/ProductType";
+import { getProducts, postProduct} from "../services/productService";
 
 
 interface ProductContextType {
     products: ProductType[],
     load: boolean,
     error: string | null,
+    addProduct: (product: NewProductType) => void
 }
 
 const ProductContext =
@@ -42,13 +43,25 @@ export function ProductProvider({ children }: { children: ReactNode }) {
 
     }, []);
 
-
+    function addProduct(product: NewProductType) {
+        postProduct(product)
+            .then(newProduct => {
+                setProducts(previousProducts => [
+                    ...previousProducts,
+                    newProduct
+                ]);
+            })
+            .catch(() => {
+                setError("Nem sikerült hozzáadni a terméket!");
+            });
+    }
 
     return (
         <ProductContext.Provider value={{
             products,
             load,
             error,
+            addProduct
         }}>
             {children}
         </ProductContext.Provider>

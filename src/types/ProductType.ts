@@ -10,3 +10,6 @@ export interface ProductType {
         count: number;
     };
 }
+
+export type NewProductType =
+    Omit<ProductType, "id" | "rating">;
